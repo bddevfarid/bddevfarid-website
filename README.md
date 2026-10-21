@@ -24,26 +24,40 @@ Open http://localhost:3000.
 
 ```bash
 npm run build
+npm start
 ```
 
-This writes a complete static site to `out/`, including:
+Builds use webpack (`next build --webpack`). Turbopack's production build spawns separate Node processes for CSS loaders, which fails on some hosted build machines; webpack runs them in-process. `npm run dev` still uses Turbopack locally.
 
-- `index.html` with title, description, Open Graph / X cards, canonical URL and Person JSON-LD for Google
-- `opengraph-image` — the 1200×630 share preview, generated from the profile data
-- `icon`, `manifest.webmanifest`, `robots.txt`, `sitemap.xml`
-- `.htaccess` — HTTPS + bare-domain redirect, caching, security headers, and PNG content type for the generated images
+Every page, the share image and the SEO files are prerendered at build time:
 
-## Deploy to Hostinger
+- `/` with title, description, Open Graph / X cards, canonical URL and Person JSON-LD for Google
+- `/opengraph-image` — the 1200×630 share preview, generated from the profile data
+- `/icon`, `/manifest.webmanifest`, `/robots.txt`, `/sitemap.xml`
 
-bddevfarid.com currently runs an empty WordPress install on Hostinger. To replace it:
+## Deploy
 
-1. Back up the existing `public_html` (hPanel → File Manager, or Backups).
-2. Run `npm run build`.
-3. Upload **the contents of `out/`** (not the folder itself) into `public_html`, including the hidden `.htaccess`.
-4. Visit https://bddevfarid.com and check the page, then test the share preview with LinkedIn's Post Inspector.
-5. In Google Search Console, request indexing for https://bddevfarid.com/ so Google picks up the new title and description.
+### Hostinger (Node.js / Next.js app)
 
-Any static host works too (Netlify, Vercel, GitHub Pages, Cloudflare Pages): point it at `npm run build` with `out` as the output folder.
+Connect the GitHub repo and use:
+
+| Setting | Value |
+| --- | --- |
+| Framework | Next.js |
+| Node.js | 20 or newer |
+| Build command | `npm run build` |
+| Output directory | `.next` |
+| Start command | `npm start` |
+
+Then visit https://bddevfarid.com, test the share preview with LinkedIn's Post Inspector, and request indexing for https://bddevfarid.com/ in Google Search Console.
+
+### Static hosting (no Node.js)
+
+```bash
+npm run build:static
+```
+
+This writes a plain HTML/CSS/JS site to `out/`, plus [`deploy/.htaccess`](deploy/.htaccess) (HTTPS + bare-domain redirect, caching, security headers, and PNG type for the generated images). Back up the old site, then upload **the contents of `out/`**, including the hidden `.htaccess`, into `public_html`. Netlify, Cloudflare Pages and GitHub Pages work the same way with `out` as the output folder.
 
 ## Features
 
