@@ -1,26 +1,100 @@
 @import "tailwindcss";
 
+/* Dark mode follows data-theme on <html>, which an inline script in the
+   layout sets from the saved choice or the OS preference before paint. */
+@custom-variant dark (&:where([data-theme="dark"], [data-theme="dark"] *));
+
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --bg: #f7f6f2;
+  --surface: #ffffff;
+  --surface-2: #efede6;
+  --ink: #15171a;
+  --muted: #5c6168;
+  --line: #e2dfd6;
+  --accent: #0d7a5f;
+  --accent-ink: #ffffff;
+  --accent-soft: #d8efe7;
+  --warn: #b4531a;
+  --grid: rgba(21, 23, 26, 0.05);
+  color-scheme: light;
+}
+
+[data-theme="dark"] {
+  --bg: #0c0e10;
+  --surface: #14171a;
+  --surface-2: #1b1f23;
+  --ink: #ecebe6;
+  --muted: #9aa0a6;
+  --line: #262b30;
+  --accent: #3fd1a5;
+  --accent-ink: #062018;
+  --accent-soft: #10302a;
+  --warn: #f0a46c;
+  --grid: rgba(236, 235, 230, 0.04);
+  color-scheme: dark;
 }
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --color-bg: var(--bg);
+  --color-surface: var(--surface);
+  --color-surface-2: var(--surface-2);
+  --color-ink: var(--ink);
+  --color-muted: var(--muted);
+  --color-line: var(--line);
+  --color-accent: var(--accent);
+  --color-accent-ink: var(--accent-ink);
+  --color-accent-soft: var(--accent-soft);
+  --color-warn: var(--warn);
+  --font-sans: var(--font-body);
+  --font-display: var(--font-display);
+  --font-mono: var(--font-code);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+html {
+  scroll-behavior: smooth;
+  scroll-padding-top: 5rem;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--font-body), ui-sans-serif, system-ui, sans-serif;
+  text-rendering: optimizeLegibility;
+}
+
+::selection {
+  background: var(--accent);
+  color: var(--accent-ink);
+}
+
+.grid-bg {
+  background-image:
+    linear-gradient(var(--grid) 1px, transparent 1px),
+    linear-gradient(90deg, var(--grid) 1px, transparent 1px);
+  background-size: 48px 48px;
+}
+
+/* Scroll reveal: content is visible by default; the effect only applies
+   once JS has marked the document, so nothing hides without scripting. */
+.js [data-reveal] {
+  opacity: 0;
+  transform: translateY(14px);
+  transition:
+    opacity 0.6s ease,
+    transform 0.6s ease;
+}
+.js [data-reveal].is-visible {
+  opacity: 1;
+  transform: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  .js [data-reveal] {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
 }
